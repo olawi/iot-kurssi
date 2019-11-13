@@ -3,7 +3,9 @@ const process = require("child_process");
 
 let app = express();
 
-app.get("/", function(req, res) {
+app.use(express.static("public"));
+
+app.get("/hello", function(req, res) {
     //    return res.status(200).json({message:"Hello world!"});
 
     let proc = process.exec("./hello.out", function(error, stdout, stderr) {
