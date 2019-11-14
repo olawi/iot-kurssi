@@ -9,9 +9,10 @@
  * @author Paavo Pietarila
  */
 
-#define DEBUG	1
+#define DEBUG 0
 #define debug_out(msg) \
-	if (DEBUG) fprintf(stderr, msg);
+	if (DEBUG)         \
+		fprintf(stderr, msg);
 
 void child_process_loop() {
 /**
@@ -27,17 +28,21 @@ void child_process_loop() {
 
 int create_child(int pid) {
 /**
- * Creates a child and puts it to work when pid is zero, 
+ * Creates a child and puts it to work when pid is zero,
  * does nothing otherwise
  */
 	debug_out("ENTER create_child\n");
-	if(pid == 0) {
+	if (pid == 0)
+	{
 		pid = fork();
-		if(pid > 0) {
+		if (pid > 0)
+		{
 			debug_out("PARENT in create_child\n");
-			// this is the parent code, return pid 
+			// this is the parent code, return pid
 			return pid;
-		} else {
+		}
+		else
+		{
 			debug_out("CHILD in create_child\n");
 			// this is the child code, enter into eternal labour
 			child_process_loop();
@@ -45,7 +50,9 @@ int create_child(int pid) {
 			debug_out("ERROR in create child code\n");
 			exit(1);
 		}
-	} else {
+	}
+	else
+	{
 		debug_out("CHILD EXISTS in create_child\n");
 		// leave things as they are
 		return pid;
@@ -57,69 +64,64 @@ int kill_child(int pid) {
  * Kills and waits the child process if it exists 
  */
 	int wstatus;
-	if(pid != 0) {
+	if (pid != 0)
+	{
 		debug_out("KILL in kill_child\n")
-		// honey, we have a child
-		kill(pid, SIGKILL);
+			// honey, we have a child
+			kill(pid, SIGKILL);
 		// let's wait for it to die
 		wait(&wstatus);
 		return wstatus;
-	} else {
+	}
+	else
+	{
 		debug_out("NO CHILDREN in kill_child\n");
 		// do nothing
 		return 0;
 	}
 }
 
-int main(int argc, char **argv)
-{
-    int c_pid = 0; // PID of the (only) child process
-    char c;
+int main(int argc, char **argv) {
+	int c_pid = 0; // PID of the (only) child process
+	char c;
 	int exit_loop = 0;
 
-    while (!exit_loop)
+	while (!exit_loop)
 	{
 		printf("\r\tSelect: (s) create child (k) kill child (q) quit ");
 		// read a char from STDIN
 		// HOX! Also reads the newline \n
 		c = getchar();
 
-		while(getchar() != '\n') {}
+		// just flush the buffer to the end, not very pretty
+		while (getchar() != '\n') { }
 
-	    // jos pid == 0 lapsi printtaa printf:llä tekstin ja nukkuu
-	    // sekunnin. Tämä loopissa kunnes lapsi tapetaan
-	    // ns. ikuinen loop. Muista tallentaa
-	    // jos c = "k" ja pid > 0, niin kill(pid,SIGKILL) ja wait().
-	    // Muista myös pid = 0, kun lapsi on kuollut.
-
-	    switch (c)
+		switch (c)
 		{
 		case 's':
-		// Create child process 
-		    printf("User command \'%c\': Create child \n", c);
+			// Create child process
+			printf("User command \'%c\': Create child \n", c);
 			c_pid = create_child(c_pid);
-		    break;
+			break;
 		case 'k':
-		// Kill child process
-		    printf("User command \'%c\': Kill child \n", c);
-			if(kill_child(c_pid)) {
+			// Kill child process
+			printf("User command \'%c\': Kill child \n", c);
+			if (kill_child(c_pid))
+			{
 				c_pid = 0;
 			}
-		    break;
+			break;
 		case 'q':
-		// User command to quit 
-		    printf("User command \'%c\': Quit \n", c);
+			// User command to quit
+			printf("User command \'%c\': Quit \n", c);
 			exit_loop = 1;
 			break;
-		case '\n':
-		// Ignore the newline
-			break;
 		default:
-		    debug_out("INVALID command in main\n");
+			debug_out("INVALID command in main\n");
 		}
 	}
-    
-    printf("Terminating child processes and exiting... \n");
+
+	printf("Terminating child processes and exiting... \n");
 	kill_child(c_pid);
 
 	return 0;
