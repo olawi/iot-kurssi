@@ -66,9 +66,9 @@ int kill_child(int pid) {
 	int wstatus;
 	if (pid != 0)
 	{
-		debug_out("KILL in kill_child\n")
-			// honey, we have a child
-			kill(pid, SIGKILL);
+		debug_out("KILL in kill_child\n");
+		// honey, we have a child
+		kill(pid, SIGKILL);
 		// let's wait for it to die
 		wait(&wstatus);
 		return wstatus;
