@@ -1,0 +1,20 @@
+16.7 harkka fork-kill-wait:
+
+Luodaan ohjelma, jolla luodaan ja tuhotaan lapsiprosesseja. Pääohjelma
+istuu do-while loopissa ja kysyy käyttäjältä vaihtoehtoja.
+
+s - luo uusi lapsiprosessi
+k - tapa lapsiprosessi
+q - lopeta ohjelma
+
+Kirjaimen tallentamiseen voi käyttää esim
+https://www.tutorialspoint.com/c_standard_library/c_function_getchar
+
+Luominen tehdään forkilla ja pid otetaan talteen. Jos lapsiprosessi on 
+jo tehty, niin uutta ei luoda (pidin arvo on erisuuri kuin nolla). 
+
+Tappaminen tehdään kill() (signaalin nimi on SIGKILL) funktiolla https://linux.die.net/man/3/kill.
+Tämän jälkeen wait-funktiolla kerätään kuollut child process pois.
+
+Ohjelman loppuessa tarkastetaan onko lapsi hengissä ja ajossa ja jos on
+niin se tapetaan kuten tapa lapsiprosessi kohdassa.
