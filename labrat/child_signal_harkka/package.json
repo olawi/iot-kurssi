@@ -1,0 +1,17 @@
+{
+  "name": "helloexpress",
+  "version": "1.0.0",
+  "description": "first node express example iot-kurssi",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "express"
+  ],
+  "author": "paavo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

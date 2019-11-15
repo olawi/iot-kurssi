@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<link href="https://fonts.googleapis.com/css?family=Abel&display=swap" rel="stylesheet">
+<style>
+*, html{
+	padding: 0;
+	margin: 0;
+}
+
+body{
+	font-family: 'Abel', sans-serif;
+}
+
+#container{
+	width: 500px;
+	margin: 12.5% auto;
+	border: 12px solid #fff;
+	outline: 2px solid green;
+	box-shadow: 0px 0px 10px #000;
+	height: 400px;
+	display: box;
+}
+
+h1{
+	text-transform: uppercase;
+}
+
+#options, #outputs{
+	float: left;
+	width: 100%;
+	clear: both;
+}
+
+#options button{
+	width: 50px;
+	margin: 10px;
+}
+
+#outputs p{
+	float: left;
+	width: 97%;
+	height: auto;
+	clear: both;
+	margin: 4px 10px;
+	outline: 1px solid #ccc;
+}
+
+#outputs p input{
+	width: 400px;
+	outline: none !important;
+	border: none !important;
+}
+
+
+</style>
+</head>
+<body>
+
+<div id="container">
+<h1>Child Slavery</h1>
+<div id="options">
+	<button id="start" value="start" onClick="start();">Start</button>
+	<button id="stop" value="start" onClick="stop();">Stop</button>
+
+	<input type="checkbox" id="daemonize" />
+	<span>Run as daemon process</span>
+	
+</div>
+
+<div id="outputs">
+	<p><span>Child 0 says:</span> <input type="text" id="child0" /></p>
+	<p><span>Child 1 says:</span> <input type="text" id="child1" /></p>
+	<p><span>Child 2 says:</span> <input type="text" id="child2" /></p>
+	<p><span>Child 3 says:</span> <input type="text" id="child3" /></p>
+	<p><span>Child 4 says:</span> <input type="text" id="child4" /></p>
+
+	<p><span>Child 5 says:</span> <input type="text" id="child5" /></p>
+	<p><span>Child 6 says:</span> <input type="text" id="child6" /></p>
+	<p><span>Child 7 says:</span> <input type="text" id="child7" /></p>
+	<p><span>Child 8 says:</span> <input type="text" id="child8" /></p>
+	<p><span>Child 9 says:</span> <input type="text" id="child9" /></p>
+</div>
+<script>
+/* format timerId */
+var timerId;
+
+function childOutput(who, msg){
+	var output = document.getElementById(who);
+   	    output.setAttribute("value", msg);
+}
+
+function outputStop(){
+	clearInterval(timerId);
+}
+
+function demo(){
+	childOutput("child0", Math.floor(Math.random()*666));
+	childOutput("child1", Math.floor(Math.random()*666));
+	childOutput("child2", Math.floor(Math.random()*666));
+	childOutput("child3", Math.floor(Math.random()*666));
+	childOutput("child4", Math.floor(Math.random()*666));
+	childOutput("child5", Math.floor(Math.random()*666));
+	childOutput("child6", Math.floor(Math.random()*666));
+	childOutput("child7", Math.floor(Math.random()*666));
+	childOutput("child8", Math.floor(Math.random()*666));
+	childOutput("child9", Math.floor(Math.random()*666));
+}
+
+function start(){
+	/* check if daemonize process is needed */
+	var daemonize = document.getElementById("daemonize");
+
+	if(daemonize.checked){
+		/* comment out alert if not needed */
+		/* alert("running as daemon process"); */
+		
+		/* start daemon process */
+
+	}
+	else{
+		/* comment out alert if not needed */
+		/* alert("running as single process"); */
+
+		/* start single process */
+	
+	}
+
+	/* syntax for childOutput -function: 
+		who (name of the child)
+		msg (data values)
+
+	   example usage:
+		childOutput("child0","PIN1:0, PIN2:1");
+	*/
+
+
+	/* run demo values for outputs */
+	timerId = setInterval(demo, 1000);
+	
+}
+
+function stop(){
+	/* stop process */
+	clearInterval(timerId);
+}
+</script>
+</body>
+</html>

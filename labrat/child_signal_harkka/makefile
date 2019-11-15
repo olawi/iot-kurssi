@@ -8,6 +8,9 @@ all: $(TARGET)
 $(TARGET) :  $(TARGET).c
 	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c
 
+hello: hello.c
+	$(CC) $(CFLAGS) -o hello.out hello.c
+
 clean:
-	rm $(TARGET)
+	rm $(TARGET) *.out
 
