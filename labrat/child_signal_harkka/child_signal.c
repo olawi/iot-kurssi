@@ -35,6 +35,15 @@
 static int g_children = 0;
 static int g_cpid_table[MAX_CHILD_COUNT];
 
+static void g_print_children() {
+	int i;
+	fprintf(stderr, "child counter : %d \n", g_children);
+	for(i=0; i < MAX_CHILD_COUNT; i++) {
+		fprintf(stderr, "[%d] ", g_cpid_table[i]);
+	}
+	fprintf(stderr, "\n");
+}
+
 int child_read_data(CHILD_DATA_TYPE *buffer)
 /** Dummy function for child labour */
 {
@@ -57,7 +66,7 @@ void child_process_loop()
 	CHILD_DATA_TYPE data[CHILD_BUFFER_SIZE];
 	int i;
     
-    while (1)
+    while (i < 3)
 	{
         child_read_data(data);
 		fprintf(stderr, "%d ", ++i);
@@ -87,7 +96,7 @@ int _create_child(int pid) {
 			// this is the child code, enter into eternal labour
 			child_process_loop();
 			// we never should get here
-			debug_out("ERROR in create child code \n");
+			debug_out("CHILD FINISHED \n");
 			exit(1);
 		}
 	}
@@ -160,12 +169,8 @@ int kill_child(int pid) {
 		debug_out("KILL in kill_child \n");
 		// honey, we have a child
 		kill(pid, SIGKILL);
-		// let's wait for it to die
-		wait(&wstatus);
-
-		// clear the pid table entry
-		g_cpid_table[c_idx] = 0;
-		g_children--;
+		// wait in the sighandler
+		// NOTE: Updating the table and counter is (or should be) done at the sighandler
 		return wstatus;
 	}
 	// We should never get here
@@ -194,9 +199,22 @@ int kill_all_children() {
 
 void my_sig_handler(int signum)
 {
+	pid_t pid;
+	int i, status, c_idx;
+
     // catch the sigchild signal and update child table and count
-    g_children--;
 	debug_out("* caught SIGCHLD ");
+
+	pid = waitpid(-1, &status, WNOHANG);
+
+	for(i = 0; i < MAX_CHILD_COUNT; i++) {
+		if((pid != 0) && (g_cpid_table[i] == pid)) {
+			printf("removing pid %d from index %d \n", g_cpid_table[i], i);
+			g_children--;
+			g_cpid_table[i] = 0;
+		}
+	}
+
 }
 
 void init_signals()
@@ -263,14 +281,26 @@ int main(int argc, char **argv)
     }
 */ 
 
+	g_print_children();
+
 	// more testing testing
     for (i=0; i < (MAX_CHILD_COUNT + 2); i++) {
 		create_child();
     }
+
+	g_print_children();
     
+	sleep(10);
+
+	g_print_children();
+
 	sleep(2);
 
 	kill_all_children();
+	g_print_children();
+
 	kill_all_children();
+
+	g_print_children();
     
 }
