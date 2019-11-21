@@ -1,3 +1,6 @@
+# Files NOT to be put to git
+.mongopass
+
 #Editor temporary files
 *.*~
 *~
