@@ -3,6 +3,7 @@ import time
 import pymongo
 import Adafruit_DHT #uncomment this line if you have DHT sensor connected to RPi
 import paho.mqtt.client as mqtt
+import json
 import datetime
 import re
 
@@ -65,8 +66,6 @@ def on_message(client, userdata, msg):
 
     reply = '{{"Req":{},"Time":"{}","ID":"{}","T":{:0.1f},"H":{:0.1f}}}'.format(req, timestamp, id, temperature, humidity)
 
-    reply = '{"tag":"test","number":2.0}'
-
     print(reply)
     client.publish(mqtt_publish_str, reply)
 
@@ -75,9 +74,29 @@ def on_message(client, userdata, msg):
 
     print('end of on_message')
 
+def do_measure():
+
+    humidity, temperature = Adafruit_DHT.read_retry(11, 4)
+    req = 71177
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+
+    reply = '{{"Req":{},"Time":"{}","ID":"{}","T":{:0.1f},"H":{:0.1f}}}'.format(req, timestamp, id, temperature, humidity)
+
+    print(reply)
+
+    if USE_MONGO:
+        write_to_db(reply)
+
+    print('end of do_measure')
 
 client.on_connect = on_connect
 client.on_message = on_message
+
+while(1):
+    do_measure()
+    pass
+    time.sleep(15)
+
 client.connect(broker_address)
 
 try:
