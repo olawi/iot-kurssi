@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
     newsock = accept(sock, (struct sockaddr *) &client_address, (socklen_t *) &clilength);
 
     if(newsock < 0) {
-        printf("Error accepting connectio: %s\n", strerror(errno));
+        printf("Error accepting connection: %s\n", strerror(errno));
         return 1;
     }
 
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
             memset(buffer, 0, 256);
             no_of_bytes = read(newsock, buffer, 256);
             if(no_of_bytes > 0) {
-                printf("incoming:\n---\n%s\n ---\n", buffer);
+                printf("incoming:\n---\n%s---\n", buffer);
             }
     } while(no_of_bytes > 0);
 

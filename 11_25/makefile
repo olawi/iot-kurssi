@@ -1,7 +1,7 @@
 CC = gcc 
 CFLAGS = -Wall
 
-TARGET = simple_server
+TARGET = simple_client
 
 all: $(TARGET)
 
