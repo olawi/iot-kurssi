@@ -1,12 +1,12 @@
 CC = gcc 
-CFLAGS = -Wall
+CFLAGS = -Wall -lpthread
 
-TARGET = simple_client
+TARGET = threaded_server
 
 all: $(TARGET)
 
 $(TARGET) :  $(TARGET).c
-	$(CC) $(CFLAGS) -o $(TARGET) $(TARGET).c
+	$(CC) $(TARGET).c -o $(TARGET) $(CFLAGS) 
 
 clean:
 	rm $(TARGET)
