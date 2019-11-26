@@ -24,8 +24,9 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
     """ read data and send away """
-    print("Received MQTT request")
+    print(f"Received MQTT request:{msg.payload.decode('UTF-8')}")
     data = do_measure()
+    print(data)
     client.publish(mqtt_publish_str, json.dumps(data))
 
 mqtt_client = mqtt.Client()
