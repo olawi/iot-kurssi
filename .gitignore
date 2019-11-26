@@ -3,6 +3,7 @@
 #Editor temporary files
 *.*~
 *~
+.vscode/
 
 # Prerequisites
 *.d
