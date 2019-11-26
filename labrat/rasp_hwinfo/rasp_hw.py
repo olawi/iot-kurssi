@@ -49,7 +49,7 @@ def do_measure():
 
     data.update({"timestamp" : timestamp})
 
-    data.update({"load" : psutil.getloadavg()})
+#    data.update({"load" : psutil.getloadavg()})
     data.update({"cputimes" : psutil.cpu_times()})
     data.update({"memory" : psutil.virtual_memory()})
     data.update({"temperatures" : psutil.sensors_temperatures()})
