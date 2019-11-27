@@ -95,7 +95,7 @@ static ssize_t led_store(struct device *dev, struct device_attribute *attr, cons
         led_on = 1;
         printk(KERN_DEBUG "Turning led on!\n");
     } else {
-        led_on = 1;
+        led_on = 0;
         printk(KERN_DEBUG "Turning led off!\n");
     }
     gpio_set_value(LED_GPIO, led_on);
