@@ -1,0 +1,41 @@
+html, body{
+	height: 100%;
+}
+
+body {
+    background-color: #fff;
+    font-family: 'Calistoga', cursive;
+    text-align: center;
+    background-image: url(https://fsa.zobj.net/crop.php?r=enc8kpC58A06Tb3UCn8iVnzVQLEz4FFSj3WcFtWmZxVdJOYBqmcdUtFTsGIbFmebEzK0xRz6WkXsxeGJFO2fz8HozLWApkz4zhkMAlx5AVZTu-1u1dywDPazKYOUseh75s_3xtYwoANc0jRt1SnYrNtrQwkuKWjnUpJEt-bpQzmveXmlmIUXctUyBfAZOYiCbFy-Pz2tAN_FX4Yn); 
+    background-size: 25% 50%;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+}
+
+h1{
+    color: #fff;
+    text-shadow: -1px -1px 2px #fff, 1px 1px 2px #000;
+    letter-spacing: 2px;
+    font-size: 3em;
+    animation-name: pulse;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes pulse{
+	0%{
+		color: #f00;
+	}
+	33%{
+		color: #0f0;
+	}
+	66%{
+		color: #00f;
+	}
+	100%{
+		color: #f00;
+	}	
+}
+
+
+
