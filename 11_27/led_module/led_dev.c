@@ -40,7 +40,7 @@ struct workqueue_struct *my_wq;
 
 struct blinking_work {
     struct delayed_work blink;
-    int data;    
+    int data;
 };
 
 struct blinking_work *my_work;
@@ -108,7 +108,7 @@ void remove_led_module(void) {
 static ssize_t led_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count) {
     long ticks = 0;
     printk(KERN_DEBUG "led_store called %s\n", buf);
-    
+
     if(strncmp(buf, "on", 2) == 0) {
         printk(KERN_DEBUG "Turning led on!\n");
         gpio_set_value(LED_GPIO, 1);
@@ -149,7 +149,6 @@ static ssize_t led_show(struct device *dev, struct device_attribute *attr, char 
 }
 
 void blinking_work_function(struct work_struct *work) {
-    long ticks = 0;
     struct blinking_work *my_work = (struct blinking_work *) work;
 
     if(blinking == 0) {
@@ -165,7 +164,8 @@ void blinking_work_function(struct work_struct *work) {
     }
 
     gpio_set_value(LED_GPIO, led_on);
-    queue_delayed_work(my_wq, (struct delayed_work *) my_work, ticks);
+    // repeat work
+    queue_delayed_work(my_wq, (struct delayed_work *) my_work, my_work->data);
     //queue_delayed_work(my_wq, (struct delayed_work *) my_work, 100);
 }
 
