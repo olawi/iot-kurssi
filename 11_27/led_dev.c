@@ -6,6 +6,7 @@
 #include <linux/fs.h>
 #include <linux/sysfs.h>
 #include <linux/kernel.h>
+#include <linux/gpio.h>
 
 #define DEVICE_NAME "led01"
 #define CLASS_NAME  "ledclass"
@@ -59,7 +60,7 @@ int init_led_module(void) {
 
     if(!gpio_is_valid(LED_GPIO)) {
         printk(KERN_ALERT "GPIO %d is not valid\n", LED_GPIO);
-        cdev_del(&mydev->cdev);
+        cdev_del(&my_dev->cdev);
         goto attr;
     }
     gpio_request(LED_GPIO, DEVICE_NAME);
