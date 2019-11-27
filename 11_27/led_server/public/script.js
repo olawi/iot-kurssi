@@ -6,7 +6,7 @@ const getHello = () => {
 	    "Content-type":"application/json"
 	}
     }
-    fetch("/led",request).then((response) => {
+    fetch("/led01",request).then((response) => {
 	if(response.ok) {
 	    response.json().then((data) => {
 		document.getElementById("message").innerText = data.message;
@@ -21,3 +21,6 @@ const getHello = () => {
     });
 }
     
+function blinker(value){
+	setTimeout(getHello, value);
+}

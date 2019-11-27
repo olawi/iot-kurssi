@@ -9,6 +9,8 @@
   <body>
     <h1>Hello from static HTML!</h1>
     <button onclick="getHello()" value="Get Hello">Get Hello</button>
-    <p id="message">Message:</p>
+    <h2>set interval (0.01 - 1.00)</h2>
+    <input type="range" min="0.01" max="1.00" value="1.00" step="0.01" onChange="blinker(this.value);" />
+    <p id="message">Bean says:</p>
   </body>
 </html>

@@ -5,14 +5,14 @@ let app = express();
 
 app.use(express.static("public"));
 
-app.get("/led", function(req, res) {
-    fs.writeFile("/sys/class/ledclass/led01/led_attr","8==D", function(err) {
+app.get("/led:state", function(req, res) {
+    fs.writeFile("/sys/class/ledclass/led01/led_attr",req.params.state, function(err) {
         if(err) {
 	    return res.status(404).json({message:"Failed to handle led"});
 	    console.log(err);
 	    throw err;
         }
-        return res.status(200).json({message:"Sukkess"});
+        return res.status(200).json({message:"Sukkess :"+req.params.state});
     })
 });
 

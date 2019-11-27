@@ -7,6 +7,8 @@
 #include <linux/sysfs.h>
 #include <linux/kernel.h>
 #include <linux/gpio.h>
+#include <linux/sched.h>
+#include <linux/workqueue.h>
 
 #define DEVICE_NAME "led01"
 #define CLASS_NAME  "ledclass"
@@ -31,6 +33,19 @@ struct class *led_class;
 struct led_dev *my_dev;
 
 DEVICE_ATTR(led_attr, S_IRUSR | S_IWUSR, led_show, led_store);
+
+/** Blinking workqueue */
+
+struct workqueue_struct *my_wq;
+
+struct blinking_work {
+    struct delayed_work blink;
+    int data;    
+};
+
+struct blinking_work *my_work;
+int blinking = 0;
+void blinking_work_function(struct work_struct *work);
 
 int init_led_module(void) {
     printk(KERN_DEBUG "Init led module\n");
@@ -65,6 +80,8 @@ int init_led_module(void) {
     }
     gpio_request(LED_GPIO, DEVICE_NAME);
     gpio_direction_output(LED_GPIO, led_on);
+    
+    my_wq = alloc_workqueue("blinking_queue", 0, 4);
 
     printk(KERN_DEBUG "Success installing led_dev\n");
     return 0;
@@ -89,22 +106,67 @@ void remove_led_module(void) {
 }
 
 static ssize_t led_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t count) {
-    printk(KERN_DEBUG "led_store called\n");
-
-    if(led_on == 0) {
-        led_on = 1;
+    long ticks = 0;
+    printk(KERN_DEBUG "led_store called %s\n", buf);
+    
+    if(strncmp(buf, "on", 2) == 0) {
         printk(KERN_DEBUG "Turning led on!\n");
-    } else {
-        led_on = 0;
-        printk(KERN_DEBUG "Turning led off!\n");
+        gpio_set_value(LED_GPIO, 1);
+        return count;
     }
-    gpio_set_value(LED_GPIO, led_on);
+    if(strncmp(buf, "off", 3) == 0) {
+        printk(KERN_DEBUG "Turning led off!\n");
+        gpio_set_value(LED_GPIO, 0);
+        return count;
+    }
+    if(kstrtol(buf, 0, &ticks)) {
+        printk(KERN_DEBUG "Invalid value\n");
+        return count;
+    }
+    
+    if(blinking) {
+        blinking = 0;
+    } else {
+        blinking = 1;
+        my_work = (struct blinking_work *) kzalloc(sizeof(struct blinking_work), GFP_KERNEL);
+        if(my_work == NULL) {
+            printk(KERN_ALERT "Cannot allocate memory for work\n");
+            blinking = 0;
+            return count;
+        }
+        INIT_DELAYED_WORK((struct delayed_work *) my_work, &blinking_work_function);
+        my_work->data = ticks;
+        queue_delayed_work(my_wq, (struct delayed_work *) my_work, ticks);
+        //queue_delayed_work(my_wq, (struct delayed_work *) my_work, 100);
+    }
+    
     return count;
 }
 
 static ssize_t led_show(struct device *dev, struct device_attribute *attr, char *buf) {
     printk(KERN_DEBUG "led_show called\n");
     return 1;
+}
+
+void blinking_work_function(struct work_struct *work) {
+    long ticks = 0;
+    struct blinking_work *my_work = (struct blinking_work *) work;
+
+    if(blinking == 0) {
+        gpio_set_value((LED_GPIO), 0);
+        kfree(my_work);
+        return;
+    }
+
+    if(led_on == 0) {
+        led_on = 1;
+    } else {
+        led_on = 0;
+    }
+
+    gpio_set_value(LED_GPIO, led_on);
+    queue_delayed_work(my_wq, (struct delayed_work *) my_work, ticks);
+    //queue_delayed_work(my_wq, (struct delayed_work *) my_work, 100);
 }
 
 MODULE_LICENSE("GPL");
