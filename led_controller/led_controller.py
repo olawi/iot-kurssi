@@ -7,20 +7,10 @@ import re
 import psutil
 
 import paho.mqtt.client as mqtt
-from gpiozero import PWMLED
 
-
-""" Define the GPIO parameters """
-RED_LED_PIN = 1
-GRN_LED_PIN = 3
-BLU_LED_PIN = 4
-PWM_FREQ = 120
-
-red_led = PWMLED(RED_LED_PIN, frequency = PWM_FREQ, initial_value = 0)
-grn_led = PWMLED(GRN_LED_PIN, frequency = PWM_FREQ, initial_value = 0)
-blu_led = PWMLED(BLU_LED_PIN, frequency = PWM_FREQ, initial_value = 0)
-
-leds = [red_led, grn_led, blu_led]
+from gpiozero import RGBLED
+from colorzero import Color
+from hw_conf import leds
 
 DEBUG = 1
 def debug(text):
@@ -52,10 +42,6 @@ def on_message(client, userdata, msg):
     reply = {}
     timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
     reply.update({"timestamp" : timestamp})    
-
-    reply.update({"R" : f28bit(red_led.value)})
-    reply.update({"G" : f28bit(grn_led.value)})
-    reply.update({"B" : f28bit(blu_led.value)})
     
     debug(reply)
     client.publish(mqtt_publish_str, json.dumps(reply))    
@@ -75,13 +61,24 @@ def mqtt_listen():
 
 def init_leds():
     """ Initialize HW """
+    red_led = PWMLED(RED_LED_PIN, frequency = PWM_FREQ, initial_value = 0)
+    grn_led = PWMLED(GRN_LED_PIN, frequency = PWM_FREQ, initial_value = 0)
+    blu_led = PWMLED(BLU_LED_PIN, frequency = PWM_FREQ, initial_value = 0)
+
+    leds = [red_led, grn_led, blu_led]
 
 def do_rgb():
     """ Adjust GPIO pins accorging to input """
     data = {}
-    data.update({"R" : red_led.value})
-    data.update({"G" : grn_led.value})
-    data.update({"B" : blu_led.value})
+
+    for led in leds:
+        debug(led.red)
+        debug(led.green)
+        debug(led.blue)
+
+        #data.update({"R" : red_led.value})
+        #data.update({"G" : grn_led.value})
+        #data.update({"B" : blu_led.value})
 
     debug(json.dumps(data))
     return data
@@ -96,13 +93,21 @@ if __name__ == "__main__":
     print(f'the time is {timestamp}')
 
     """ start random pulsing """
+    timer = 0.5
     for led in leds: 
         led.pulse(fade_in_time=random.random()+.20, fade_out_time=random.random()+.20)
+        #led.pulse(timer, timer)
+        timer += 0.5
 
     init_mqtt()
     mqtt_listen()
 
-    for led in leds: led.off()
+    time.sleep(1)
+    for led in leds:
+        led.off()
+        led.close()
+
+    time.sleep(1)
 
     print("Exiting RGB control")
 
