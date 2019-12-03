@@ -1,0 +1,19 @@
+{
+  "name": "heroku_mqtt",
+  "version": "1.0.0",
+  "description": "Heroku MQTT process",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/olawi/iot-kurssi/labrat/heroku_mqtt"
+  },
+  "keywords": [
+    "heroku",
+    "mqtt"
+  ],
+  "author": "paavo",
+  "license": "ISC"
+}
