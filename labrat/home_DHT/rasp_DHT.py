@@ -1,4 +1,6 @@
+import os
 import datetime
+import time
 import json
 import re
 
@@ -18,7 +20,7 @@ def debug(text):
 
 ''' Simple DHT measurement in reply to MQTT request '''
 
-DEVICE_ID = "ID1"
+DEVICE_ID = "RASP_501"
 
 def on_message(client, userdata, msg):
     """ handel the mqtt request and send reply """
@@ -56,5 +58,16 @@ if __name__ == "__main__":
     init_mqtt()
     ''' overload on_message defined in home_DHT.py '''
     mqtt_client.on_message = on_message
-    mqtt_listen()
+    
+    pid = os.fork()
+    if pid == 0:
+        mqtt_listen()
+    else:
+        while True:
+            data = do_measure()
+            data.update({"ID": DEVICE_ID})
+            mqtt_client.publish(mqtt_publish_str, json.dumps(data))
+            debug(data)
+            time.sleep(10*60)
+
 
