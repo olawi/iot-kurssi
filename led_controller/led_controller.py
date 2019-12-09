@@ -35,11 +35,13 @@ def on_message(client, userdata, msg):
     debug(f"Received MQTT request:{msg.payload.decode('UTF-8')}")
 
     """ parse input """
+    input = json.loads(msg.payload.decode('UTF-8'))
 
-    do_rgb()
+    debug(input)
+    reply = do_rgb(input)
 
     """ return LED momentary status """
-    reply = {}
+    #reply = {}
     timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
     reply.update({"timestamp" : timestamp})    
     
@@ -61,24 +63,31 @@ def mqtt_listen():
 
 def init_leds():
     """ Initialize HW """
+    # HOX: do not use this function anymore, leds initialized in
+    # hw_conf.py
     red_led = PWMLED(RED_LED_PIN, frequency = PWM_FREQ, initial_value = 0)
     grn_led = PWMLED(GRN_LED_PIN, frequency = PWM_FREQ, initial_value = 0)
     blu_led = PWMLED(BLU_LED_PIN, frequency = PWM_FREQ, initial_value = 0)
 
     leds = [red_led, grn_led, blu_led]
 
-def do_rgb():
+def do_rgb(input):
     """ Adjust GPIO pins accorging to input """
     data = {}
 
+    ledno = 1
     for led in leds:
-        debug(led.red)
-        debug(led.green)
-        debug(led.blue)
+        led.red = input[f"LED_{ledno}"][0] / 255
+        led.green = input[f"LED_{ledno}"][1] / 255
+        led.blue = input[f"LED_{ledno}"][2] / 255
+        #debug(led.red)
+        #debug(led.green)
+        #debug(led.blue)
 
-        #data.update({"R" : red_led.value})
-        #data.update({"G" : grn_led.value})
-        #data.update({"B" : blu_led.value})
+        led_data = {f"LED_{ledno}" : [led.red, led.green, led.blue]}
+        data.update(led_data)
+        debug(data)
+        ledno += 1
 
     debug(json.dumps(data))
     return data
