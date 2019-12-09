@@ -44,11 +44,14 @@ def do_measure():
     else:
         H,T = (666,777)
 
+    DP = T - (100 - H)/5;
+
     timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
     data = {
         "TS" : timestamp,
-        "T" : T,
-        "H" : H,
+        "T"  : T,
+        "H"  : H,
+        "DP" : DP,
     }
     debug(data)
     debug("end do_measure")
@@ -68,6 +71,6 @@ if __name__ == "__main__":
             data.update({"ID": DEVICE_ID})
             mqtt_client.publish(mqtt_publish_str, json.dumps(data))
             debug(data)
-            time.sleep(10*60)
+            time.sleep(10)
 
 
